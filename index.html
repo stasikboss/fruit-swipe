@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>הפירות שלי · הורדה</title>
+<meta name="description" content="משחק חיתוך פירות רגוע לילדים בגילאי 3 עד 6, עם ירח שמדבר בעברית, ברוסית ובאנגלית. בלי פרסומות, ועובד גם בלי אינטרנט.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="הפירות שלי · משחק עם סוף טוב">
+<meta property="og:description" content="משחק חיתוך פירות רגוע לילדים בגילאי 3 עד 6. בלי פרסומות, עובד בלי אינטרנט, והירח מעודד בעברית, ברוסית ובאנגלית.">
+<meta property="og:url" content="https://stasikboss.github.io/fruit-swipe/">
+<meta property="og:image" content="https://stasikboss.github.io/fruit-swipe/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0d2a36">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="הפירות שלי">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="fonts/fonts.css">
+<script>
+  // Opened from the home screen: go straight to the game.
+  (function(){
+    var app = (window.matchMedia && (matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches)) || navigator.standalone === true;
+    if (app) location.replace('play.html');
+  })();
+</script>
+<style>
+/* Layout: one centered column on the game's night sky; the install card comes first, then a preview and the parents' notes */
+:root{
+  --sky:#0d2a36;
+  --sky-deep:#0a2230;
+  --ink:#1b2430;
+  --ink-soft:#4a5561;
+  --cream:#fff5e2;
+  --cream-soft:#d9d2c3;
+  --melon:#ff4b5c;
+  --gold:#ffc83d;
+  --glass:rgba(255,245,226,.12);
+  --font-display:"Fredoka","Nunito","Varela Round",ui-rounded,system-ui,sans-serif;
+  --font-body:"Varela Round","Nunito","Fredoka",ui-rounded,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--sky-deep)}
+body{margin:0;min-height:100vh;color:var(--cream);font-family:var(--font-body);
+  background:radial-gradient(ellipse 120% 70% at 70% 0%, #1f6170 0%, #123d4b 40%, var(--sky-deep) 100%) fixed, var(--sky-deep);
+  -webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+.wrap{max-width:36rem;margin:0 auto;padding-inline:16px;padding-block:calc(env(safe-area-inset-top,0px) + 28px) calc(env(safe-area-inset-bottom,0px) + 40px);display:grid;gap:22px}
+
+.hero{display:grid;justify-items:center;text-align:center;gap:10px}
+.app-icon{width:104px;height:104px;border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,.45),0 0 0 3px rgba(255,245,226,.15)}
+.eyebrow{margin:6px 0 0;font:600 15px/1.2 var(--font-display);letter-spacing:.06em;color:var(--gold)}
+h1{margin:0;font:700 clamp(44px,13vw,64px)/1 var(--font-display);text-shadow:0 5px 0 var(--ink)}
+.lede{margin:0;max-width:30rem;font:500 clamp(17px,4.4vw,20px)/1.45 var(--font-display);color:var(--cream-soft);text-wrap:balance}
+.badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:4px}
+.badge{padding:7px 13px;border-radius:999px;background:var(--glass);box-shadow:inset 0 0 0 1.5px rgba(255,245,226,.22);font:600 14px/1 var(--font-display);color:var(--cream)}
+
+.card{background:var(--cream);color:var(--ink);border:3px solid var(--ink);border-radius:24px;box-shadow:0 6px 0 var(--ink);padding:20px;display:grid;gap:16px}
+.card h2{margin:0;font:700 24px/1.2 var(--font-display)}
+.card p{margin:0}
+.muted{font:400 15px/1.5 var(--font-body);color:var(--ink-soft)}
+
+.warn{background:#fff1c9;border-color:var(--ink)}
+.warn h2{display:flex;align-items:center;gap:10px}
+.warn svg{flex:none}
+
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;border-radius:999px;background:rgba(27,36,48,.08)}
+.seg button{min-height:44px;border:0;border-radius:999px;background:transparent;color:var(--ink);font:700 16px/1.1 var(--font-display);cursor:pointer;padding:8px 10px}
+.seg button[aria-selected="true"]{background:var(--ink);color:var(--cream)}
+.seg button:focus-visible,.btn:focus-visible,.link:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:14px;counter-reset:step}
+.steps li{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;counter-increment:step}
+.steps li::before{content:counter(step);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--melon);border:3px solid var(--ink);font:700 19px/1 var(--font-display);color:var(--ink)}
+.step-title{display:block;font:700 18px/1.3 var(--font-display)}
+.step-text{display:block;margin-top:3px;font:400 15px/1.5 var(--font-body);color:var(--ink-soft)}
+.ui{display:inline-flex;align-items:center;gap:5px;padding:1px 8px;border-radius:8px;background:rgba(27,36,48,.08);font:600 15px/1.5 var(--font-display);color:var(--ink);white-space:nowrap}
+.ui svg{width:17px;height:17px}
+bdi.en{font-family:var(--font-display)}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:12px 22px;border-radius:999px;border:3px solid var(--ink);
+  background:var(--melon);color:var(--ink);font:700 20px/1.1 var(--font-display);text-decoration:none;cursor:pointer;box-shadow:0 5px 0 var(--ink)}
+.btn.secondary{background:var(--cream);box-shadow:0 4px 0 var(--ink);font-size:17px;min-height:50px}
+.btn svg{width:22px;height:22px;flex:none}
+.done{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:16px;background:#e3f6d9;font:600 16px/1.4 var(--font-display)}
+
+.qr-row{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+.qr{width:150px;height:150px;padding:8px;border-radius:14px;background:#ffffff;border:3px solid var(--ink)}
+.qr svg{display:block;width:100%;height:100%}
+
+.play-link{display:flex;justify-content:center}
+.link{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:10px 20px;border-radius:999px;border:2px solid rgba(255,245,226,.3);color:var(--cream);text-decoration:none;font:600 17px/1 var(--font-display)}
+.link:hover{border-color:var(--cream)}
+.link svg{width:20px;height:20px}
+
+.shots{display:flex;justify-content:center;gap:14px;padding-block:6px}
+.shot{width:min(42vw,190px);padding:7px;border-radius:30px;background:#0a1319;border:2px solid #2a3b45;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.shot img{display:block;width:100%;height:auto;border-radius:23px}
+.shot:first-child{transform:rotate(-3deg)}
+.shot:last-child{transform:rotate(3deg) translateY(10px)}
+
+.why{display:grid;gap:14px}
+.why h2{margin:0;font:700 22px/1.25 var(--font-display);color:var(--cream)}
+.why-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.why-list li{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;padding:12px 14px;border-radius:18px;background:var(--glass)}
+.why-dot{width:44px;height:44px;border-radius:50%;border:3px solid var(--ink);display:grid;place-items:center}
+.why-dot svg{width:22px;height:22px}
+.why-title{display:block;font:700 17px/1.3 var(--font-display);color:var(--cream)}
+.why-text{display:block;font:400 15px/1.45 var(--font-body);color:var(--cream-soft)}
+.privacy{margin:0;font:400 14px/1.5 var(--font-body);color:var(--cream-soft);text-align:center;text-wrap:balance}
+footer{text-align:center;font:500 14px/1.5 var(--font-display);color:var(--cream-soft)}
+footer strong{color:var(--gold);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <img class="app-icon" src="icons/icon-512.png" alt="" width="104" height="104">
+    <p class="eyebrow">משחק לילדים בגילאי 3 עד 6</p>
+    <h1>הפירות שלי</h1>
+    <p class="lede">חותכים פירות, ממלאים סל, והירח מעודד בעברית, ברוסית ובאנגלית.</p>
+    <div class="badges">
+      <span class="badge">בלי פרסומות</span>
+      <span class="badge">בלי הרשמה</span>
+      <span class="badge">עובד בלי אינטרנט</span>
+      <span class="badge">עברית · Русский · English</span>
+    </div>
+  </header>
+
+  <section class="card warn" id="inapp" hidden aria-labelledby="inapp-title">
+    <h2 id="inapp-title">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1b2430" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4.5M12 17.5h.01"/></svg>
+      <span>פתחתם מתוך <span id="inapp-name">פייסבוק</span></span>
+    </h2>
+    <p class="muted">מתוך האפליקציה הזו אי אפשר להתקין. פותחים את הקישור בדפדפן הרגיל של הטלפון, וממשיכים משם.</p>
+    <p class="muted" id="inapp-ios" hidden>לוחצים על <span class="ui">⋯</span> או על סמל המצפן בפינת המסך, ובוחרים לפתוח בספארי (Open in Safari).</p>
+    <a class="btn" id="open-chrome" href="#" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+      <span>פתיחה ב-Chrome</span>
+    </a>
+    <button class="btn secondary" type="button" id="copy-link">העתקת הקישור</button>
+    <p class="muted" id="copy-done" hidden role="status">הקישור הועתק. מדביקים אותו בשורת הכתובת של הדפדפן.</p>
+    <p class="muted" id="copy-fallback" hidden>מעתיקים את הקישור: <bdi dir="ltr" id="copy-url"></bdi></p>
+  </section>
+
+  <section class="card" id="desktop" hidden aria-labelledby="desktop-title">
+    <h2 id="desktop-title">פותחים במחשב?</h2>
+    <div class="qr-row">
+      <div class="qr" id="qr" role="img" aria-label="קוד QR לדף ההורדה"></div>
+      <p class="muted">סורקים את הקוד עם המצלמה של הטלפון או הטאבלט, ומתקינים משם לפי השלבים כאן למטה.</p>
+    </div>
+  </section>
+
+  <section class="card" id="install" aria-labelledby="install-title">
+    <h2 id="install-title">התקנה בטלפון או בטאבלט</h2>
+    <div class="seg" role="tablist" aria-label="סוג המכשיר">
+      <button type="button" role="tab" id="tab-ios" aria-controls="panel-ios" aria-selected="true">אייפון / אייפד</button>
+      <button type="button" role="tab" id="tab-android" aria-controls="panel-android" aria-selected="false">גלקסי / אנדרואיד</button>
+    </div>
+
+    <div id="panel-ios" role="tabpanel" aria-labelledby="tab-ios">
+      <ol class="steps">
+        <li><span><span class="step-title">פותחים את הדף בספארי</span><span class="step-text">אם הוא נפתח בתוך וואטסאפ או פייסבוק, עוברים קודם לספארי.</span></span></li>
+        <li><span><span class="step-title">לוחצים על כפתור השיתוף <span class="ui"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg></span></span><span class="step-text">ב-iOS 26 הוא נמצא בתפריט <span class="ui">⋯</span> שליד שורת הכתובת.</span></span></li>
+        <li><span><span class="step-title">בוחרים ״הוספה למסך הבית״</span><span class="step-text"><bdi class="en" dir="ltr">Add to Home Screen</bdi>. אם לא רואים את האפשרות, גוללים מטה ברשימה.</span></span></li>
+        <li><span><span class="step-title">לוחצים ״הוספה״</span><span class="step-text">משאירים את ״פתיחה כאפליקציית רשת״ מסומן (<bdi class="en" dir="ltr">Open as Web App</bdi>). אפשר גם לשנות את השם, למשל ״הפירות של יונתן״.</span></span></li>
+      </ol>
+    </div>
+
+    <div id="panel-android" role="tabpanel" aria-labelledby="tab-android" hidden>
+      <div id="android-oneclick" hidden>
+        <button class="btn" type="button" id="install-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>
+          <span>התקנת המשחק</span>
+        </button>
+        <p class="muted" style="margin-top:12px">ההתקנה לוקחת כמה שניות, בלי חנות ובלי הרשמה.</p>
+      </div>
+      <ol class="steps" id="android-steps">
+        <li><span><span class="step-title">פותחים את הדף ב-Chrome או ב-Samsung Internet</span><span class="step-text">אם הוא נפתח בתוך וואטסאפ או פייסבוק, עוברים קודם לדפדפן.</span></span></li>
+        <li><span><span class="step-title">ב-Chrome: לוחצים על <span class="ui">⋮</span></span><span class="step-text">ובוחרים ״התקנת אפליקציה״ או ״הוספה למסך הבית״ (<bdi class="en" dir="ltr">Install app / Add to Home screen</bdi>).</span></span></li>
+        <li><span><span class="step-title">ב-Samsung Internet: לוחצים על <span class="ui">☰</span></span><span class="step-text">ובוחרים ״הוספת דף אל״ ואז ״מסך הבית״ (<bdi class="en" dir="ltr">Add page to › Home screen</bdi>).</span></span></li>
+        <li><span><span class="step-title">מאשרים ״התקנה״</span><span class="step-text">הסמל ״הפירות שלי״ יופיע במסך הבית.</span></span></li>
+      </ol>
+    </div>
+
+    <p class="done" id="installed" hidden role="status">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1b2430" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      <span>מותקן. פותחים את ״הפירות שלי״ ממסך הבית.</span>
+    </p>
+  </section>
+
+  <div class="play-link">
+    <a class="link" href="play.html">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+      <span>לשחק עכשיו, בלי להתקין</span>
+    </a>
+  </div>
+
+  <div class="shots" aria-label="צילומי מסך מהמשחק">
+    <div class="shot"><img src="screens/game.jpg" alt="הירח שואל את יונתן אם הוא יכול למצוא פרי אדום" width="1170" height="2532" loading="lazy"></div>
+    <div class="shot"><img src="screens/end.jpg" alt="מסך הסיום: הסל מלא, ומילים לתרגול בעברית, ברוסית ובאנגלית" width="1170" height="2532" loading="lazy"></div>
+  </div>
+
+  <section class="why" aria-labelledby="why-title">
+    <h2 id="why-title">מה שונה במשחק הזה</h2>
+    <ul class="why-list">
+      <li>
+        <span class="why-dot" style="background:#ffc83d"><svg viewBox="0 0 24 24" fill="none" stroke="#1b2430" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h18l-2 9H5z"/><path d="M8 10l3-6M16 10l-3-6"/></svg></span>
+        <span><span class="why-title">סוף טבעי</span><span class="why-text">הסל מתמלא לאט, וכשהוא מלא המשחק נגמר בעצמו. בלי ספירה לאחור.</span></span>
+      </li>
+      <li>
+        <span class="why-dot" style="background:#ff6b78"><svg viewBox="0 0 24 24" fill="none" stroke="#1b2430" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg></span>
+        <span><span class="why-title">בלי לחץ להמשיך</span><span class="why-text">אין פרסומות, אין פרסים יומיים ואין דמות שקוראת לחזור.</span></span>
+      </li>
+      <li>
+        <span class="why-dot" style="background:#7fd67a"><svg viewBox="0 0 24 24" fill="none" stroke="#1b2430" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16l4-4 3 3 7-8"/><path d="M14 7h4v4"/></svg></span>
+        <span><span class="why-title">שבח על המאמץ</span><span class="why-text">״אתה מתאמן ומצליח״ במקום ״אתה אלוף״.</span></span>
+      </li>
+      <li>
+        <span class="why-dot" style="background:#5ec8ff"><svg viewBox="0 0 24 24" fill="none" stroke="#1b2430" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h11v7H8l-3 3v-3H3z"/><path d="M14 9h7v7h-2v3l-3-3h-5v-2"/></svg></span>
+        <span><span class="why-title">לומדים תוך כדי</span><span class="why-text">שמות של פירות וצבעים בשלוש שפות, ורשימת מילים לתרגול בסוף כל סבב.</span></span>
+      </li>
+      <li>
+        <span class="why-dot" style="background:#c9a7ff"><svg viewBox="0 0 24 24" fill="none" stroke="#1b2430" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></svg></span>
+        <span><span class="why-title">פינת הורים</span><span class="why-text">שם הילד, גיל, אורך סבב, מקסימום יומי ונעילה לפני השינה, מאחורי שאלת חשבון.</span></span>
+      </li>
+    </ul>
+    <p class="privacy">המשחק לא אוסף מידע ולא שולח שום דבר. ההגדרות נשמרות רק במכשיר שלכם.</p>
+  </section>
+
+  <footer>נבנה ליונתן, ועכשיו לכל הילדים · <strong>אבא AI</strong></footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var $ = function(id){ return document.getElementById(id); };
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/i.test(ua);
+  var isMobile = isIOS || isAndroid;
+  var inApp = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger|musical_ly|TikTok|Line\//i.test(ua);
+  var cleanUrl = location.origin + location.pathname + location.search;
+
+  /* Device tabs: the visitor's own device first; #ios or #android in the link forces one. */
+  var tabs = { ios: $('tab-ios'), android: $('tab-android') };
+  var panels = { ios: $('panel-ios'), android: $('panel-android') };
+  function show(which){
+    ['ios', 'android'].forEach(function(k){
+      var on = k === which;
+      tabs[k].setAttribute('aria-selected', String(on));
+      tabs[k].tabIndex = on ? 0 : -1;
+      panels[k].hidden = !on;
+    });
+  }
+  tabs.ios.addEventListener('click', function(){ show('ios'); });
+  tabs.android.addEventListener('click', function(){ show('android'); });
+  [tabs.ios, tabs.android].forEach(function(t){
+    t.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ var next = t === tabs.ios ? 'android' : 'ios'; show(next); tabs[next].focus(); }
+    });
+  });
+  var hash = (location.hash || '').replace('#', '');
+  show(hash === 'android' || hash === 'galaxy' ? 'android' : hash === 'ios' ? 'ios' : (isAndroid ? 'android' : 'ios'));
+
+  /* Opened inside Facebook, Instagram and similar: installing only works from the real browser. */
+  if (inApp){
+    $('inapp').hidden = false;
+    $('inapp-name').textContent = /Instagram/i.test(ua) ? 'אינסטגרם' : /Messenger/i.test(ua) ? 'מסנג׳ר' : /musical_ly|TikTok/i.test(ua) ? 'טיקטוק' : 'פייסבוק';
+    if (isIOS) $('inapp-ios').hidden = false;
+    if (isAndroid){
+      var chrome = $('open-chrome');
+      chrome.href = 'intent://' + location.host + location.pathname + location.search + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(cleanUrl) + ';end';
+      chrome.hidden = false;
+    }
+  }
+  $('copy-link').addEventListener('click', function(){
+    var done = function(){ $('copy-done').hidden = false; $('copy-fallback').hidden = true; };
+    var fail = function(){ $('copy-url').textContent = cleanUrl; $('copy-fallback').hidden = false; };
+    try { navigator.clipboard.writeText(cleanUrl).then(done, fail); } catch (e) { fail(); }
+  });
+
+  /* On a computer: a QR code to open this page on the phone. */
+  if (!isMobile){
+    $('desktop').hidden = false;
+    var s = document.createElement('script');
+    s.src = 'qr.js';
+    s.onload = function(){
+      try { var qr = qrcode(0, 'M'); qr.addData(cleanUrl); qr.make(); $('qr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); } catch (e) { $('desktop').hidden = true; }
+    };
+    s.onerror = function(){ $('desktop').hidden = true; };
+    document.head.appendChild(s);
+  }
+
+  /* Android and Chrome: a one-tap install button when the browser offers it. */
+  var deferred = null;
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferred = e;
+    $('android-oneclick').hidden = false;
+    $('android-steps').hidden = true;
+  });
+  $('install-btn').addEventListener('click', function(){
+    if (!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.then(function(r){
+      deferred = null;
+      $('android-oneclick').hidden = true;
+      if (r && r.outcome === 'accepted') $('installed').hidden = false;
+      else $('android-steps').hidden = false;
+    });
+  });
+  window.addEventListener('appinstalled', function(){
+    $('installed').hidden = false;
+    $('android-oneclick').hidden = true;
+  });
+
+  if ('serviceWorker' in navigator) window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+})();
+</script>
+</body>
+</html>

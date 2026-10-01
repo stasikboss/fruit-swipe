@@ -1,0 +1,25 @@
+{
+  "id": "./play.html",
+  "name": "הפירות שלי – משחק חיתוך פירות",
+  "short_name": "הפירות שלי",
+  "description": "משחק חיתוך פירות רגוע לילדים בגילאי 3 עד 6, עם ירח שמדבר בעברית, ברוסית ובאנגלית. בלי פרסומות, ועובד גם בלי אינטרנט.",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./play.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "any",
+  "background_color": "#0d2a36",
+  "theme_color": "#0d2a36",
+  "categories": ["games", "kids", "education"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "screens/game.jpg", "sizes": "1170x2532", "type": "image/jpeg", "form_factor": "narrow", "label": "הירח שואל: אתה יכול למצוא פרי אדום?" },
+    { "src": "screens/end.jpg", "sizes": "1170x2532", "type": "image/jpeg", "form_factor": "narrow", "label": "הסל מלא, ומילים לתרגול בשלוש שפות" }
+  ]
+}
