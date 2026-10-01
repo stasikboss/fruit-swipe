@@ -241,7 +241,7 @@ body{height:100%;margin:0;background:var(--sky);color:var(--cream);font-family:v
   <div class="screen-inner">
     <p class="eyebrow" id="start-eyebrow">Yonatan's Fruit Swipe</p>
     <h1 class="title" dir="rtl" id="start-title">הפירות של יונתן</h1>
-    <p class="sleep-msg" id="sleep-msg" dir="rtl" hidden>הירח ישן עכשיו. נשחק מחר!</p>
+    <p class="sleep-msg" id="sleep-msg" dir="rtl" hidden>הַיָּרֵחַ יָשֵׁן עַכְשָׁיו. נְשַׂחֵק מָחָר!</p>
     <div class="worlds" id="worlds" role="group" aria-label="בוחרים עולם ומתחילים לשחק">
       <button class="world world-night" type="button" data-world="night" id="world-night" aria-label="לשחק בלילה, עם הירח">
         <span class="world-art">
@@ -256,7 +256,7 @@ body{height:100%;margin:0;background:var(--sky);color:var(--cream);font-family:v
             <path d="M42 57 Q50 64.5 58 57" fill="none" stroke="#1b2430" stroke-width="3" stroke-linecap="round"/>
           </svg>
         </span>
-        <span>לילה</span>
+        <span>לַיְלָה</span>
       </button>
       <button class="world world-day" type="button" data-world="day" id="world-day" aria-label="לשחק ביום, עם השמש">
         <span class="world-art">
@@ -275,11 +275,11 @@ body{height:100%;margin:0;background:var(--sky);color:var(--cream);font-family:v
             <path d="M42 57 Q50 64.5 58 57" fill="none" stroke="#1b2430" stroke-width="3" stroke-linecap="round"/>
           </svg>
         </span>
-        <span>יום</span>
+        <span>יוֹם</span>
       </button>
     </div>
     <p class="hint" id="start-hint">
-      <span dir="rtl" lang="he">בוחרים יום או לילה, ומחליקים את האצבע על הפירות</span>
+      <span dir="rtl" lang="he">בּוֹחֲרִים יוֹם אוֹ לַיְלָה, וּמַחֲלִיקִים אֶת הָאֶצְבַּע עַל הַפֵּירוֹת</span>
       <span lang="ru">Выбери день или ночь и проводи пальцем по фруктам</span>
       <span lang="en">Pick day or night, then swipe the fruit</span>
     </p>
@@ -295,17 +295,17 @@ body{height:100%;margin:0;background:var(--sky);color:var(--cream);font-family:v
 <div class="screen" id="end" hidden>
   <div class="screen-inner" dir="rtl" lang="he">
     <p class="eyebrow" id="end-eyebrow">Yonatan's Fruit Swipe</p>
-    <h2 class="title">הסל מלא!</h2>
+    <h2 class="title">הַסַּל מָלֵא!</h2>
     <p class="end-count" id="end-count">בסבב הזה נחתכו 0 פירות</p>
     <div class="idea" id="move-box">
-      <span class="idea-label">עכשיו זזים, בלי מסך</span>
+      <span class="idea-label">עַכְשָׁיו זָזִים, בְּלִי מָסָךְ</span>
       <div class="move-row">
         <span class="idea-text" id="move-text">לקפוץ 5 פעמים כמו קנגורו</span>
         <span class="move-count" id="move-count" aria-live="polite"></span>
       </div>
     </div>
     <div class="idea" id="end-words-box" hidden>
-      <span class="idea-label">מה חתכנו בסבב, ואיך קוראים לזה</span>
+      <span class="idea-label">מָה חָתַכְנוּ בַּסֶּבֶב, וְאֵיךְ קוֹרְאִים לָזֶה</span>
       <div class="words" id="end-words"></div>
       <p class="found-colors" id="end-colors" hidden></p>
     </div>
@@ -346,7 +346,7 @@ body{height:100%;margin:0;background:var(--sky);color:var(--cream);font-family:v
         <label class="mini" for="name-ru">שם ברוסית, לא חובה<input id="name-ru" type="text" maxlength="20" autocomplete="off" dir="ltr" lang="ru"></label>
         <label class="mini" for="name-en">שם באנגלית, לא חובה<input id="name-en" type="text" maxlength="20" autocomplete="off" dir="ltr" lang="en"></label>
       </div>
-      <p class="small">בשפה בלי שם, הדמות פשוט מדברת בלי השם.</p>
+      <p class="small">בשפה בלי שם, הדמות פשוט מדברת בלי השם. את השם בעברית אפשר לכתוב גם עם ניקוד, כמו שהילד יראה אותו.</p>
       <div class="chips" role="group" aria-label="בן או בת, לדקדוק נכון בעברית וברוסית">
         <button class="chip" type="button" id="g-m" data-g="m" aria-pressed="true">בן</button>
         <button class="chip" type="button" id="g-f" data-g="f" aria-pressed="false">בת</button>
@@ -809,38 +809,38 @@ const typeById = id => TYPES.find(t => t.id === id);
 
 /* Colors the character can ask for, and which fruit count for each (with plural forms for counting). */
 const COLORS = {
-  red: { he: 'אדום', hePl: 'אדומים', ru: 'красный', ruGen: 'красных', en: 'red', hex: '#ff4b4b', types: ['apple', 'strawberry'] },
-  orange: { he: 'כתום', hePl: 'כתומים', ru: 'оранжевый', ruGen: 'оранжевых', en: 'orange', hex: '#ff9a1f', types: ['orange', 'peach'] },
-  yellow: { he: 'צהוב', hePl: 'צהובים', ru: 'жёлтый', ruGen: 'жёлтых', en: 'yellow', hex: '#ffe14d', types: ['lemon', 'banana'] },
-  green: { he: 'ירוק', hePl: 'ירוקים', ru: 'зелёный', ruGen: 'зелёных', en: 'green', hex: '#5fbf5a', types: ['melon', 'pear'] },
-  purple: { he: 'סגול', hePl: 'סגולים', ru: 'фиолетовый', ruGen: 'фиолетовых', en: 'purple', hex: '#a45ae6', types: ['plum'] },
-  pink: { he: 'ורוד', hePl: 'ורודים', ru: 'розовый', ruGen: 'розовых', en: 'pink', hex: '#ff6fb6', types: ['dragon'] }
+  red: { he: 'אָדוֹם', hePl: 'אֲדוּמִּים', ru: 'красный', ruGen: 'красных', en: 'red', hex: '#ff4b4b', types: ['apple', 'strawberry'] },
+  orange: { he: 'כָּתוֹם', hePl: 'כְּתוּמִּים', ru: 'оранжевый', ruGen: 'оранжевых', en: 'orange', hex: '#ff9a1f', types: ['orange', 'peach'] },
+  yellow: { he: 'צָהוֹב', hePl: 'צְהוּבִּים', ru: 'жёлтый', ruGen: 'жёлтых', en: 'yellow', hex: '#ffe14d', types: ['lemon', 'banana'] },
+  green: { he: 'יָרוֹק', hePl: 'יְרוּקִּים', ru: 'зелёный', ruGen: 'зелёных', en: 'green', hex: '#5fbf5a', types: ['melon', 'pear'] },
+  purple: { he: 'סָגוֹל', hePl: 'סְגוּלִּים', ru: 'фиолетовый', ruGen: 'фиолетовых', en: 'purple', hex: '#a45ae6', types: ['plum'] },
+  pink: { he: 'וָרוֹד', hePl: 'וְרוּדִּים', ru: 'розовый', ruGen: 'розовых', en: 'pink', hex: '#ff6fb6', types: ['dragon'] }
 };
 const TYPE_COLOR = {};
 for (const k of Object.keys(COLORS)) for (const id of COLORS[k].types) TYPE_COLOR[id] = k;
 /* Words for the end-of-round list and the parents' questions. */
 const WORDS = {
-  melon: { he: 'אבטיח', ru: 'Арбуз', en: 'Watermelon' },
-  orange: { he: 'תפוז', ru: 'Апельсин', en: 'Orange' },
-  apple: { he: 'תפוח', ru: 'Яблоко', en: 'Apple' },
-  kiwi: { he: 'קיווי', ru: 'Киви', en: 'Kiwi' },
-  lemon: { he: 'לימון', ru: 'Лимон', en: 'Lemon' },
-  plum: { he: 'שזיף', ru: 'Слива', en: 'Plum' },
-  peach: { he: 'אפרסק', ru: 'Персик', en: 'Peach' },
-  dragon: { he: 'פיטאיה', ru: 'Питахайя', en: 'Dragon fruit' },
-  strawberry: { he: 'תות', ru: 'Клубника', en: 'Strawberry' },
-  banana: { he: 'בננה', ru: 'Банан', en: 'Banana' },
-  pear: { he: 'אגס', ru: 'Груша', en: 'Pear' }
+  melon: { he: 'אֲבַטִּיחַ', ru: 'Арбуз', en: 'Watermelon' },
+  orange: { he: 'תַּפּוּז', ru: 'Апельсин', en: 'Orange' },
+  apple: { he: 'תַּפּוּחַ', ru: 'Яблоко', en: 'Apple' },
+  kiwi: { he: 'קִיווִי', ru: 'Киви', en: 'Kiwi' },
+  lemon: { he: 'לִימוֹן', ru: 'Лимон', en: 'Lemon' },
+  plum: { he: 'שְׁזִיף', ru: 'Слива', en: 'Plum' },
+  peach: { he: 'אֲפַרְסֵק', ru: 'Персик', en: 'Peach' },
+  dragon: { he: 'פִּיטָאיָה', ru: 'Питахайя', en: 'Dragon fruit' },
+  strawberry: { he: 'תּוּת', ru: 'Клубника', en: 'Strawberry' },
+  banana: { he: 'בָּנָנָה', ru: 'Банан', en: 'Banana' },
+  pear: { he: 'אַגָּס', ru: 'Груша', en: 'Pear' }
 };
 const HE_PLURAL = { melon: 'אבטיחים', orange: 'תפוזים', apple: 'תפוחים', kiwi: 'קיווים', lemon: 'לימונים', plum: 'שזיפים', peach: 'אפרסקים', dragon: 'פיטאיות', strawberry: 'תותים', banana: 'בננות', pear: 'אגסים' };
 /* Counting aloud (abstract counting in Hebrew uses the feminine forms), and numbers that go with "fruit". */
 const COUNT_WORDS = {
-  he: ['', 'אחת', 'שתיים', 'שלוש', 'ארבע', 'חמש'],
+  he: ['', 'אַחַת', 'שְׁתַּיִים', 'שָׁלוֹשׁ', 'אַרְבַּע', 'חָמֵשׁ'],
   ru: ['', 'Один', 'Два', 'Три', 'Четыре', 'Пять'],
   en: ['', 'One', 'Two', 'Three', 'Four', 'Five']
 };
 const NUM_FRUIT = {
-  he: ['', 'אחד', 'שני', 'שלושה', 'ארבעה', 'חמישה'],
+  he: ['', 'אֶחָד', 'שְׁנֵי', 'שְׁלוֹשָׁה', 'אַרְבָּעָה', 'חֲמִישָּׁה'],
   ru: ['', 'один', 'два', 'три', 'четыре', 'пять'],
   en: ['', 'one', 'two', 'three', 'four', 'five']
 };
@@ -1166,105 +1166,110 @@ function buzz(ms){ try { if (navigator.vibrate) navigator.vibrate(ms); } catch (
 
 /* ---------- what the character says: praise for effort, fruit and color names, counting, in Hebrew, Russian and English ---------- */
 const LANGS = ['he', 'ru', 'en'];
+// Hebrew the child sees has niqqud; the speech engine and the parents' text get it without.
+const NIQQUD = /[\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7]/g;
+const plain = s => String(s == null ? '' : s).replace(NIQQUD, '');
+const NAME_NIQQUD = { 'יונתן': 'יוֹנָתָן' };
+const heShown = n => NAME_NIQQUD[n] || n;
 const LANG_IN_HE = { he: 'בעברית', ru: 'ברוסית', en: 'באנגלית' };
 const LANG_TAGS = { he: 'he-IL', ru: 'ru-RU', en: 'en-US' };
 // Each line bank: a list per language, or { m: [...], f: [...] } where the grammar changes for a boy or a girl.
 const LINES = {
   start: {
-    he: { m: ['היי {name}! בוא נמלא את הסל בפירות!'], f: ['היי {name}! בואי נמלא את הסל בפירות!'] },
+    he: { m: ['הַיי {name}! בּוֹא נְמַלֵּא אֶת הַסַּל בְּפֵירוֹת!'], f: ['הַיי {name}! בּוֹאִי נְמַלֵּא אֶת הַסַּל בְּפֵירוֹת!'] },
     ru: ['Привет, {name}! Давай наполним корзинку фруктами!'],
     en: ["Hi {name}! Let's fill the basket with fruit!"]
   },
   hint: {
-    he: { m: ['{name}, תחליק את האצבע על פרי, ככה!'], f: ['{name}, תחליקי את האצבע על פרי, ככה!'] },
+    he: { m: ['{name}, תַּחֲלִיק אֶת הָאֶצְבַּע עַל פְּרִי, כָּכָה!'], f: ['{name}, תַּחֲלִיקִי אֶת הָאֶצְבַּע עַל פְּרִי, כָּכָה!'] },
     ru: ['{name}, проведи пальчиком по фрукту, вот так!'],
     en: ['{name}, swipe your finger across a fruit, like this!']
   },
   milestone: {
-    he: { m: ['אתה מתאמן ומצליח, {name}! כבר {n}!', 'איזו החלקה יפה, {name}! כבר {n}!', 'אתה ממשיך לנסות, {name}! כבר {n}!'],
-          f: ['את מתאמנת ומצליחה, {name}! כבר {n}!', 'איזו החלקה יפה, {name}! כבר {n}!', 'את ממשיכה לנסות, {name}! כבר {n}!'] },
+    he: { m: ['אַתָּה מִתְאַמֵּן וּמַצְלִיחַ, {name}! כְּבָר {n}!', 'אֵיזוֹ הַחְלָקָה יָפָה, {name}! כְּבָר {n}!', 'אַתָּה מַמְשִׁיךְ לְנַסּוֹת, {name}! כְּבָר {n}!'],
+          f: ['אַתְּ מִתְאַמֶּנֶת וּמַצְלִיחָה, {name}! כְּבָר {n}!', 'אֵיזוֹ הַחְלָקָה יָפָה, {name}! כְּבָר {n}!', 'אַתְּ מַמְשִׁיכָה לְנַסּוֹת, {name}! כְּבָר {n}!'] },
     ru: { m: ['{name}, ты так старался! Уже {n}!', 'Отлично режешь, {name}! Уже {n}!', 'Ты пробовал снова и снова! Уже {n}!'],
           f: ['{name}, ты так старалась! Уже {n}!', 'Отлично режешь, {name}! Уже {n}!', 'Ты пробовала снова и снова! Уже {n}!'] },
     en: ['You worked hard, {name}! {n} already!', "Nice swiping, {name}! That's {n}!", 'You kept trying, {name}! {n}!']
   },
   effort: {
-    he: { m: ['יפה, {name}, אתה מתאמן!', 'אתה מחליק בריכוז, {name}!', 'איזו תנועה יפה, {name}!'],
-          f: ['יפה, {name}, את מתאמנת!', 'את מחליקה בריכוז, {name}!', 'איזו תנועה יפה, {name}!'] },
+    he: { m: ['יָפֶה, {name}, אַתָּה מִתְאַמֵּן!', 'אַתָּה מַחְלִיק בְּרִיכּוּז, {name}!', 'אֵיזוֹ תְּנוּעָה יָפָה, {name}!'],
+          f: ['יָפֶה, {name}, אַתְּ מִתְאַמֶּנֶת!', 'אַתְּ מַחְלִיקָה בְּרִיכּוּז, {name}!', 'אֵיזוֹ תְּנוּעָה יָפָה, {name}!'] },
     ru: ['Молодец, {name}, ты тренируешься!', 'Ты так внимательно режешь, {name}!', 'Какое красивое движение, {name}!'],
     en: ['Good practice, {name}!', 'You are slicing so carefully, {name}!', 'What a nice swipe, {name}!']
   },
   combo: {
-    he: ['החלקה אחת, והרבה פירות!', 'וואו, {name}! כמה פירות בבת אחת!'],
+    he: ['הַחְלָקָה אַחַת, וְהַרְבֵּה פֵּירוֹת!', 'ווָאוּ, {name}! כַּמָּה פֵּירוֹת בְּבַת אַחַת!'],
     ru: { m: ['Один взмах, и сразу несколько!', '{name}, ты разрезал сразу несколько!'], f: ['Один взмах, и сразу несколько!', '{name}, ты разрезала сразу несколько!'] },
     en: ['One swipe, lots of fruit!', '{name}, you cut a few at once!']
   },
   gold: {
-    he: ['כוכב זהב! כל הכבוד, {name}!'],
+    he: ['כּוֹכַב זָהָב! כָּל הַכָּבוֹד, {name}!'],
     ru: { m: ['Ты нашёл золотую звезду, {name}!'], f: ['Ты нашла золотую звезду, {name}!'] },
     en: ['You found the golden star, {name}!']
   },
   find: {
-    he: { m: ['{name}, אתה יכול למצוא פרי {color}?'], f: ['{name}, את יכולה למצוא פרי {color}?'] },
+    he: { m: ['{name}, אַתָּה יָכוֹל לִמְצוֹא פְּרִי {color}?'], f: ['{name}, אַתְּ יְכוֹלָה לִמְצוֹא פְּרִי {color}?'] },
     ru: ['{name}, найди {color} фрукт!'],
     en: ['{name}, can you find something {color}?']
   },
   findN: {
-    he: { m: ['{name}, אתה יכול למצוא {num} פירות {colorPl}?'], f: ['{name}, את יכולה למצוא {num} פירות {colorPl}?'] },
+    he: { m: ['{name}, אַתָּה יָכוֹל לִמְצוֹא {num} פֵּירוֹת {colorPl}?'], f: ['{name}, אַתְּ יְכוֹלָה לִמְצוֹא {num} פֵּירוֹת {colorPl}?'] },
     ru: ['{name}, найди {num} {colorPl} {fw}!'],
     en: ['{name}, can you find {num} {colorPl} fruits?']
   },
-  found: { he: ['כן! {fruit}'], ru: ['Да! {fruit}'], en: ['Yes! {fruit}'] },
+  found: { he: ['כֵּן! {fruit}'], ru: ['Да! {fruit}'], en: ['Yes! {fruit}'] },
   foundN: {
-    he: ['{num} פירות {colorPl}! ספרת יפה, {name}!'],
+    he: { m: ['{num} פֵּירוֹת {colorPl}! סָפַרְתָּ יָפֶה, {name}!'], f: ['{num} פֵּירוֹת {colorPl}! סָפַרְתְּ יָפֶה, {name}!'] },
     ru: ['{num} {colorPl} {fw}! Ты отлично считаешь, {name}!'],
     en: ['{num} {colorPl} fruits! Great counting, {name}!']
   },
   freeze: {
-    he: { m: ['{name}, עצור! מחכים רגע...'], f: ['{name}, עצרי! מחכים רגע...'] },
+    he: { m: ['{name}, עֲצוֹר! מְחַכִּים רֶגַע...'], f: ['{name}, עִצְרִי! מְחַכִּים רֶגַע...'] },
     ru: ['Стоп, {name}! Замри и подожди...'],
     en: ["Freeze, {name}! Let's wait..."]
   },
   waited: {
-    he: ['חיכית בסבלנות! קדימה, ממשיכים!'],
+    he: { m: ['חִיכִּיתָ בְּסַבְלָנוּת! קָדִימָה, מַמְשִׁיכִים!'], f: ['חִיכִּית בְּסַבְלָנוּת! קָדִימָה, מַמְשִׁיכִים!'] },
     ru: { m: ['Ты терпеливо ждал! Вперёд!'], f: ['Ты терпеливо ждала! Вперёд!'] },
     en: ['You waited so well! Go!']
   },
-  go: { he: ['קדימה, ממשיכים!'], ru: ['Вперёд!'], en: ['Go!'] },
-  shh: { he: ['ששש... עוד רגע'], ru: ['Тсс... ещё чуть-чуть'], en: ['Shh... almost'] },
+  go: { he: ['קָדִימָה, מַמְשִׁיכִים!'], ru: ['Вперёд!'], en: ['Go!'] },
+  shh: { he: ['שׁשׁשׁ... עוֹד רֶגַע'], ru: ['Тсс... ещё чуть-чуть'], en: ['Shh... almost'] },
   end: {
-    he: { m: ['הסל מלא! עבדת יפה, {name}. עכשיו בוא נזוז!'], f: ['הסל מלא! עבדת יפה, {name}. עכשיו בואי נזוז!'] },
+    he: { m: ['הַסַּל מָלֵא! עָבַדְתָּ יָפֶה, {name}. עַכְשָׁיו בּוֹא נָזוּז!'], f: ['הַסַּל מָלֵא! עָבַדְתְּ יָפֶה, {name}. עַכְשָׁיו בּוֹאִי נָזוּז!'] },
     ru: { m: ['Корзинка полная! Ты хорошо поработал, {name}. А теперь подвигаемся!'], f: ['Корзинка полная! Ты хорошо поработала, {name}. А теперь подвигаемся!'] },
     en: ["The basket is full! You worked hard, {name}. Now let's move!"]
   },
   endPlain: {
-    he: { m: ['הסל מלא! איזו עבודה יפה, {name}. בוא נלך לאכול פרי אמיתי!'], f: ['הסל מלא! איזו עבודה יפה, {name}. בואי נלך לאכול פרי אמיתי!'] },
+    he: { m: ['הַסַּל מָלֵא! אֵיזוֹ עֲבוֹדָה יָפָה, {name}. בּוֹא נֵלֵךְ לֶאֱכוֹל פְּרִי אֲמִיתִּי!'], f: ['הַסַּל מָלֵא! אֵיזוֹ עֲבוֹדָה יָפָה, {name}. בּוֹאִי נֵלֵךְ לֶאֱכוֹל פְּרִי אֲמִיתִּי!'] },
     ru: { m: ['Корзинка полная! Ты хорошо поработал, {name}. Пойдём съедим настоящий фрукт!'], f: ['Корзинка полная! Ты хорошо поработала, {name}. Пойдём съедим настоящий фрукт!'] },
     en: ["The basket is full! You worked hard, {name}. Let's go eat a real fruit!"]
   },
   moveDone: {
-    he: { m: ['זזת יפה! ועכשיו, בוא נלך לאכול פרי אמיתי!'], f: ['זזת יפה! ועכשיו, בואי נלך לאכול פרי אמיתי!'] },
+    he: { m: ['זַזְתָּ יָפֶה! וְעַכְשָׁיו, בּוֹא נֵלֵךְ לֶאֱכוֹל פְּרִי אֲמִיתִּי!'], f: ['זַזְתְּ יָפֶה! וְעַכְשָׁיו, בּוֹאִי נֵלֵךְ לֶאֱכוֹל פְּרִי אֲמִיתִּי!'] },
     ru: ['Отлично подвигались! А теперь пойдём съедим настоящий фрукт!'],
     en: ["Great moving! Now let's go eat a real fruit!"]
   }
 };
 const MOVES = [
-  { card: 'לקפוץ 5 פעמים כמו קנגורו', line: { he: { m: ['בוא נקפוץ חמש פעמים כמו קנגורו!'], f: ['בואי נקפוץ חמש פעמים כמו קנגורו!'] }, ru: ['Прыгаем пять раз, как кенгуру!'], en: ["Let's jump five times like a kangaroo!"] } },
-  { card: 'להתמתח גבוה כמו עץ ולספור עד 5', line: { he: { m: ['בוא נתמתח גבוה כמו עץ, ונספור עד חמש!'], f: ['בואי נתמתח גבוה כמו עץ, ונספור עד חמש!'] }, ru: ['Тянемся высоко, как дерево, и считаем до пяти!'], en: ["Let's stretch up tall like a tree and count to five!"] } },
-  { card: 'לנפנף בידיים כמו ציפור, 5 פעמים', line: { he: { m: ['בוא ננפנף בידיים כמו ציפור, חמש פעמים!'], f: ['בואי ננפנף בידיים כמו ציפור, חמש פעמים!'] }, ru: ['Машем крыльями, как птичка, пять раз!'], en: ["Let's flap our wings like a bird, five times!"] } },
-  { card: 'לרקוע ברגליים כמו פיל, 5 פעמים', line: { he: { m: ['בוא נרקע ברגליים כמו פיל, חמש פעמים!'], f: ['בואי נרקע ברגליים כמו פיל, חמש פעמים!'] }, ru: ['Топаем, как слон, пять раз!'], en: ["Let's stomp like an elephant, five times!"] } }
+  { card: 'לִקְפּוֹץ 5 פְּעָמִים כְּמוֹ קֶנְגּוּרוּ', line: { he: { m: ['בּוֹא נִקְפּוֹץ חָמֵשׁ פְּעָמִים כְּמוֹ קֶנְגּוּרוּ!'], f: ['בּוֹאִי נִקְפּוֹץ חָמֵשׁ פְּעָמִים כְּמוֹ קֶנְגּוּרוּ!'] }, ru: ['Прыгаем пять раз, как кенгуру!'], en: ["Let's jump five times like a kangaroo!"] } },
+  { card: 'לְהִתְמַתֵּחַ גָּבוֹהַּ כְּמוֹ עֵץ וְלִסְפּוֹר עַד 5', line: { he: { m: ['בּוֹא נִתְמַתַּח גָּבוֹהַּ כְּמוֹ עֵץ, וְנִסְפּוֹר עַד חָמֵשׁ!'], f: ['בּוֹאִי נִתְמַתַּח גָּבוֹהַּ כְּמוֹ עֵץ, וְנִסְפּוֹר עַד חָמֵשׁ!'] }, ru: ['Тянемся высоко, как дерево, и считаем до пяти!'], en: ["Let's stretch up tall like a tree and count to five!"] } },
+  { card: 'לְנַפְנֵף בַּיָּדַיִים כְּמוֹ צִיפּוֹר, 5 פְּעָמִים', line: { he: { m: ['בּוֹא נְנַפְנֵף בַּיָּדַיִים כְּמוֹ צִיפּוֹר, חָמֵשׁ פְּעָמִים!'], f: ['בּוֹאִי נְנַפְנֵף בַּיָּדַיִים כְּמוֹ צִיפּוֹר, חָמֵשׁ פְּעָמִים!'] }, ru: ['Машем крыльями, как птичка, пять раз!'], en: ["Let's flap our wings like a bird, five times!"] } },
+  { card: 'לִרְקוֹעַ בָּרַגְלַיִים כְּמוֹ פִּיל, 5 פְּעָמִים', line: { he: { m: ['בּוֹא נִרְקַע בָּרַגְלַיִים כְּמוֹ פִּיל, חָמֵשׁ פְּעָמִים!'], f: ['בּוֹאִי נִרְקַע בָּרַגְלַיִים כְּמוֹ פִּיל, חָמֵשׁ פְּעָמִים!'] }, ru: ['Топаем, как слон, пять раз!'], en: ["Let's stomp like an elephant, five times!"] } }
 ];
 const NAMES = {
-  melon: { he: ['אבטיח!'], ru: ['Арбуз!'], en: ['Watermelon!'] },
-  orange: { he: ['תפוז!'], ru: ['Апельсин!'], en: ['Orange!'] },
-  apple: { he: ['תפוח אדום!'], ru: ['Красное яблоко!'], en: ['A red apple!'] },
-  kiwi: { he: ['קיווי!'], ru: ['Киви!'], en: ['Kiwi!'] },
-  lemon: { he: ['לימון צהוב!'], ru: ['Жёлтый лимон!'], en: ['A yellow lemon!'] },
-  plum: { he: ['שזיף סגול!'], ru: ['Фиолетовая слива!'], en: ['A purple plum!'] },
-  peach: { he: ['אפרסק!'], ru: ['Персик!'], en: ['Peach!'] },
-  dragon: { he: ['פיטאיה!'], ru: ['Питахайя!'], en: ['Dragon fruit!'] },
-  strawberry: { he: ['תות אדום!'], ru: ['Клубника!'], en: ['A strawberry!'] },
-  banana: { he: ['בננה צהובה!'], ru: ['Банан!'], en: ['A banana!'] },
-  pear: { he: ['אגס ירוק!'], ru: ['Зелёная груша!'], en: ['A green pear!'] }
+  melon: { he: ['אֲבַטִּיחַ!'], ru: ['Арбуз!'], en: ['Watermelon!'] },
+  orange: { he: ['תַּפּוּז!'], ru: ['Апельсин!'], en: ['Orange!'] },
+  apple: { he: ['תַּפּוּחַ אָדוֹם!'], ru: ['Красное яблоко!'], en: ['A red apple!'] },
+  kiwi: { he: ['קִיווִי!'], ru: ['Киви!'], en: ['Kiwi!'] },
+  lemon: { he: ['לִימוֹן צָהוֹב!'], ru: ['Жёлтый лимон!'], en: ['A yellow lemon!'] },
+  plum: { he: ['שְׁזִיף סָגוֹל!'], ru: ['Фиолетовая слива!'], en: ['A purple plum!'] },
+  peach: { he: ['אֲפַרְסֵק!'], ru: ['Персик!'], en: ['Peach!'] },
+  dragon: { he: ['פִּיטָאיָה!'], ru: ['Питахайя!'], en: ['Dragon fruit!'] },
+  strawberry: { he: ['תּוּת אָדוֹם!'], ru: ['Клубника!'], en: ['A strawberry!'] },
+  banana: { he: ['בָּנָנָה צְהוּבָּה!'], ru: ['Банан!'], en: ['A banana!'] },
+  pear: { he: ['אַגָּס יָרוֹק!'], ru: ['Зелёная груша!'], en: ['A green pear!'] }
 };
 function lineFor(bank, lang){
   const entry = bank[lang];
@@ -1273,7 +1278,7 @@ function lineFor(bank, lang){
   return pick(list);
 }
 function fillLine(t, lang, vars){
-  const name = nameIn(lang);
+  const name = lang === 'he' ? heShown(nameIn(lang)) : nameIn(lang);
   let s = t;
   if (name) s = s.split('{name}').join(name);
   else s = s.replace(/\{name\},\s*/g, '').replace(/,\s*\{name\}/g, '').replace(/\s*\{name\}/g, '').replace(/\{name\}\s*/g, '');
@@ -1369,8 +1374,8 @@ function noteSpeechOk(l){
 }
 
 function duck(on){ if (master && AC && !muted) master.gain.setTargetAtTime(on ? VOL_DUCK : VOL, AC.currentTime, 0.05); }
-function textMs(t){ return voiceOn && !muted ? 900 + String(t || '').length * 72 : 1500; }
-const estSpeechMs = t => 900 + String(t || '').length * 85;
+function textMs(t){ return voiceOn && !muted ? 900 + plain(t).length * 72 : 1500; }
+const estSpeechMs = t => 900 + plain(t).length * 85;
 
 const speechQ = [];
 let cur = null, curSeq = 0, gapUntil = 0, pumpTimer = 0;
@@ -1389,7 +1394,7 @@ function startUtterance(it){
     if (!cur || cur.seq !== seq) return;
     let u;
     try {
-      u = new SpeechSynthesisUtterance(it.text);
+      u = new SpeechSynthesisUtterance(plain(it.text));
       u.lang = LANG_TAGS[it.lang];
       const v = voiceFor(it.lang); if (v) u.voice = v;
       u.rate = 0.9; u.pitch = 1.12; u.volume = 1;
@@ -1417,7 +1422,7 @@ function onUEnd(seq){
   if (!cur || cur.seq !== seq) return;
   const it = cur, now = performance.now();
   // a language with no real voice behind it often "ends" at once, without a sound
-  if (it.started && now - it.started < 160 && it.text.length >= 6){ noteSpeechFail(it.lang, 'too-short'); keepText(seq, 'too-short'); return; }
+  if (it.started && now - it.started < 160 && plain(it.text).length >= 6){ noteSpeechFail(it.lang, 'too-short'); keepText(seq, 'too-short'); return; }
   if (!it.started) noteSpeechOk(it.lang);
   health.fail[it.lang] = 0;
   finishItem(seq, 'ok');
@@ -2339,13 +2344,13 @@ function releaseAwake(){ try { if (wakeLock) wakeLock.release(); } catch (e) {} 
 function eyebrowText(){ const en = nameIn('en'); return en ? en + "'s Fruit Swipe" : 'Fruit Swipe'; }
 function renderStart(){
   const he = nameIn('he');
-  startTitle.textContent = he ? 'הפירות של ' + he : 'הפירות שלי';
+  startTitle.textContent = he ? 'הַפֵּירוֹת שֶׁל ' + heShown(he) : 'הַפֵּירוֹת שֶׁלִּי';
   startEyebrow.textContent = eyebrowText();
   endEyebrow.textContent = eyebrowText();
   firstRun.hidden = profileSaved;
   const lock = (playing || ended) ? null : lockReason();
   sleepMsg.hidden = !lock; worldsEl.hidden = !!lock; startHint.hidden = !!lock;
-  if (lock) sleepMsg.textContent = lock === 'bed' ? 'הירח ישן עכשיו. נשחק מחר!' : 'הסל של היום כבר מלא. נשחק שוב מחר!';
+  if (lock) sleepMsg.textContent = lock === 'bed' ? 'הַיָּרֵחַ יָשֵׁן עַכְשָׁיו. נְשַׂחֵק מָחָר!' : 'הַסַּל שֶׁל הַיּוֹם כְּבָר מָלֵא. נְשַׂחֵק שׁוּב מָחָר!';
   moonAsleep = !!lock && !startEl.hidden;
   applyWorld(lock ? 'night' : world);
 }
@@ -2412,7 +2417,7 @@ function renderEndWords(){
   if (roundColors.length){
     const lbl = document.createElement('span');
     const he = nameIn('he');
-    lbl.textContent = he ? 'צבעים ש' + he + (profile.g === 'f' ? ' מצאה:' : ' מצא:') : 'צבעים שנמצאו:';
+    lbl.textContent = he ? (profile.g === 'f' ? 'צְבָעִים שֶׁמָּצְאָה ' : 'צְבָעִים שֶׁמָּצָא ') + heShown(he) + ':' : 'צְבָעִים שֶׁנִּמְצְאוּ:';
     endColors.append(lbl);
     for (const k of roundColors){
       const d = document.createElement('span'); d.className = 'dot'; d.style.background = COLORS[k].hex; d.setAttribute('aria-hidden', 'true');
@@ -2432,9 +2437,9 @@ function renderAsk(){
     const top = ids[0];
     items.push(['כמה ' + HE_PLURAL[top] + ' חתכת?', String(roundCounts[top])]);
     const colored = ids.find(id => id !== top && TYPE_COLOR[id]) || (TYPE_COLOR[top] ? top : null);
-    if (colored) items.push(['איזה צבע יש ל' + WORDS[colored].he + '?', COLORS[TYPE_COLOR[colored]].he]);
+    if (colored) items.push(['איזה צבע יש ל' + plain(WORDS[colored].he) + '?', plain(COLORS[TYPE_COLOR[colored]].he)]);
     const other = langsOn.ru ? 'ru' : langsOn.en ? 'en' : null;
-    if (other) items.push(['איך אומרים ' + WORDS[top].he + ' ' + LANG_IN_HE[other] + '?', WORDS[top][other], other]);
+    if (other) items.push(['איך אומרים ' + plain(WORDS[top].he) + ' ' + LANG_IN_HE[other] + '?', WORDS[top][other], other]);
   }
   items.push(['איזה פרי הכי אהבת לחתוך? למה?', '']);
   items.push(['ואחר כך, בלי מסך:', pick(IDEAS)]);
@@ -2449,7 +2454,6 @@ function renderAsk(){
     askList.append(li);
   }
 }
-function textMs(t){ return voiceOn && !muted ? 900 + String(t || '').length * 72 : 1500; }
 /* The end of the round: the character invites a short movement game and counts it out loud, then points to a real fruit.
    Each step starts when the line before it has been said, and the counts are at least 1.6 s apart so there is time to move. */
 function runEndSequence(){
@@ -2485,10 +2489,10 @@ function showEnd(silent){
   hud.hidden = true;
   strokes.clear();
   const he = nameIn('he');
-  const count = score === 1 ? 'פרי אחד' : score.toLocaleString('en-US') + ' פירות';
+  const count = score === 1 ? 'פְּרִי אֶחָד' : score.toLocaleString('en-US') + ' פֵּירוֹת';
   endCount.textContent = he
-    ? 'בסבב הזה ' + he + (profile.g === 'f' ? ' חתכה ' : ' חתך ') + count
-    : (score === 1 ? 'בסבב הזה נחתך פרי אחד' : 'בסבב הזה נחתכו ' + count);
+    ? 'בַּסֶּבֶב הַזֶּה ' + heShown(he) + (profile.g === 'f' ? ' חָתְכָה ' : ' חָתַךְ ') + count
+    : (score === 1 ? 'בַּסֶּבֶב הַזֶּה נֶחְתַּךְ פְּרִי אֶחָד' : 'בַּסֶּבֶב הַזֶּה נֶחְתְּכוּ ' + count);
   currentMove = pick(MOVES);
   moveText.textContent = currentMove.card;
   moveBox.hidden = !opts.move;
