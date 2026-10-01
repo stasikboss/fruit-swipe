@@ -161,6 +161,22 @@ body{height:100%;margin:0;background:var(--sky);color:var(--cream);font-family:v
 .chip[aria-pressed="true"]::before{background:var(--melon);border-color:var(--cream)}
 .chip:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .voice-note{margin:0;font:400 14px/1.45 var(--font-body);color:#8a4b00}
+.voice-check{display:grid;gap:8px;padding:12px;border-radius:16px;background:rgba(27,36,48,.06)}
+.vc-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.vc-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:4px 10px}
+.vc-lang{font:700 15px/1.2 var(--font-display)}
+.vc-voice{font:400 14px/1.3 var(--font-body);color:var(--ink-soft);overflow-wrap:anywhere}
+.vc-select{min-height:40px;width:100%;min-width:0;border-radius:12px;border:2px solid rgba(27,36,48,.28);background:#fff;color:var(--ink);font:400 14px/1.2 var(--font-body);padding:4px 8px}
+.vc-test{min-height:40px;padding:6px 14px;border-radius:999px;border:2px solid var(--ink);background:transparent;color:var(--ink);font:700 14px/1 var(--font-display);cursor:pointer;white-space:nowrap}
+.vc-test:disabled{opacity:.4;cursor:default}
+.vc-test:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.vc-status{grid-column:1/-1;font:500 13px/1.35 var(--font-body);color:var(--ink-soft)}
+.vc-status:empty{display:none}
+.vc-status.ok{color:#1d6b35}
+.vc-status.bad{color:#a23b00}
+.vc-chrome{justify-self:start;display:inline-flex;align-items:center;text-decoration:none}
+.no-voice{margin:0;font:500 14px/1.45 var(--font-body);color:var(--cream-soft);text-wrap:balance}
+.no-voice a{color:var(--gold);font-weight:700;text-underline-offset:3px}
 .chart{display:flex;align-items:stretch;gap:6px;height:128px}
 .bar-col{flex:1 1 0;min-width:0;display:grid;grid-template-rows:auto 1fr auto;justify-items:center;gap:4px}
 .bar-track{width:100%;display:flex;align-items:flex-end;justify-content:center}
@@ -267,6 +283,7 @@ body{height:100%;margin:0;background:var(--sky);color:var(--cream);font-family:v
       <span lang="ru">Выбери день или ночь и проводи пальцем по фруктам</span>
       <span lang="en">Pick day or night, then swipe the fruit</span>
     </p>
+    <p class="no-voice" id="no-voice" dir="rtl" lang="he" hidden><span id="no-voice-text"></span> <a id="no-voice-link" target="_blank" rel="noopener" hidden>לפתוח ב-Chrome</a></p>
     <p class="first-run" id="first-run" dir="rtl" hidden>לא יונתן? אפשר להגדיר שם, גיל ושפות בהגדרות להורים.</p>
     <button class="parent-link" type="button" data-open-parents dir="rtl" lang="he">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></svg>
@@ -370,6 +387,12 @@ body{height:100%;margin:0;background:var(--sky);color:var(--cream);font-family:v
         <button class="chip lang-chip" type="button" id="lang-en" data-lang="en" lang="en" aria-pressed="true">English</button>
       </div>
       <p class="voice-note" id="voice-note" hidden></p>
+      <div class="voice-check">
+        <span class="mini">בדיקת קול: לוחצים כדי לשמוע כל שפה</span>
+        <ul class="vc-list" id="vc-list"></ul>
+        <p class="small" id="vc-sum"></p>
+        <a class="btn vc-chrome" id="vc-chrome" target="_blank" rel="noopener" hidden>פתיחת המשחק ב-Chrome</a>
+      </div>
     </div>
 
     <div class="section">
@@ -436,6 +459,7 @@ const moveBox = $('move-box'), moveText = $('move-text'), moveCount = $('move-co
 const endWordsBox = $('end-words-box'), endWords = $('end-words'), endColors = $('end-colors'), askList = $('ask-list');
 const muteBtn = $('mute'), iconOn = $('icon-on'), iconOff = $('icon-off'), fsBtn = $('fs');
 const voiceBtn = $('voice'), voiceOnIcon = $('voice-on'), voiceOffIcon = $('voice-off'), voiceNote = $('voice-note');
+const vcList = $('vc-list'), vcSum = $('vc-sum'), vcChrome = $('vc-chrome'), noVoiceEl = $('no-voice'), noVoiceText = $('no-voice-text'), noVoiceLink = $('no-voice-link');
 const gateEl = $('gate'), gateForm = $('gate-form'), gateQ = $('gate-q'), gateInput = $('gate-answer'), gateErr = $('gate-error');
 const parentsEl = $('parents'), todayMinEl = $('today-min'), totalLine = $('total-line'), endRoundBtn = $('end-round'), chartEl = $('chart');
 const nameInputs = { he: $('name-he'), ru: $('name-ru'), en: $('name-en') };
@@ -1263,74 +1287,205 @@ function fillLine(t, lang, vars){
   return s;
 }
 
-const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
+/* ---------- the voice ----------
+   One line at a time, in order: counting, the freeze game and the end of the round wait for the line before them to
+   finish instead of cutting it, and small praise is said only when nobody is talking.
+   The engine is checked while it works. Android in-app browsers (Claude, Facebook, Instagram...) have a speech object
+   that never makes a sound, and some phones list a language that has no voice behind it. Those cases fall back to the
+   speech bubble, and the parents' corner says what happened and how to fix it. */
+const UA = navigator.userAgent || '';
+const isAndroid = /Android/i.test(UA);
+const isAndroidInApp = isAndroid && (/; wv\)/.test(UA) || /FBAN|FBAV|FB_IAB|Instagram|Line\/|MicroMessenger/i.test(UA));
+const isSamsungBrowser = /SamsungBrowser/i.test(UA);
+const APP_URL = 'https://stasikboss.github.io/fruit-swipe/play.html';
+const synth = (window.speechSynthesis && typeof window.SpeechSynthesisUtterance === 'function') ? window.speechSynthesis : null;
 let voices = [];
 let langsOn = Object.assign({ he: true, ru: true, en: true }, store.get('yfs-langs', {}));
 let voiceOn = store.get('yfs-voice', true) !== false;
-let langTurn = 0, talkUntil = 0, talkPri = 0, speechActive = false, textTalkUntil = 0, speakId = 0, lastComboTalk = 0, lastNameAt = 0;
+let voicePick = Object.assign({}, store.get('yfs-voice-pick', {}));
+let langTurn = 0, talkUntil = 0, talkPri = 0, speechActive = false, textTalkUntil = 0, lastComboTalk = 0, lastNameAt = 0;
+let voicesSettled = false;
+// what the engine has shown so far in this session
+const health = { started: 0, silent: 0, off: !synth, why: synth ? '' : 'none', lastError: '', fail: { he: 0, ru: 0, en: 0 }, bad: { he: false, ru: false, en: false }, badEarly: [] };
 
-const tagOf = v => String(v.lang || '').toLowerCase().replace('_', '-');
+const tagOf = v => String(v.lang || '').toLowerCase().replace(/_/g, '-');
+const LANG_PREFIX = { he: ['he', 'iw'], ru: ['ru'], en: ['en'] };
+// macOS/iOS novelty and retro voices (Albert, Bad News, Zarvox, Eddy, Grandma...) are listed alongside the normal ones.
+const NOVELTY = /^(albert|bad news|bahh|bells|boing|bubbles|cellos|deranged|good news|hysterical|jester|junior|kathy|organ|pipe organ|princess|ralph|superstar|trinoids|whisper|wobble|zarvox|fred|eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley)\b/i;
+function voicesFor(l){
+  return voices.filter(v => { const t = tagOf(v); return LANG_PREFIX[l].some(p => t === p || t.startsWith(p + '-')); });
+}
+function voiceScore(v, l){
+  const id = String(v.voiceURI || '') + ' ' + String(v.name || '');
+  let s = 0;
+  if (/com\.apple\.speech\.synthesis\.voice\.|com\.apple\.eloquence/i.test(id) || NOVELTY.test(String(v.name || ''))) s -= 20;
+  if (/premium/i.test(id)) s += 6; else if (/enhanced|neural|natural/i.test(id)) s += 5; else if (/siri/i.test(id)) s += 4; else if (/google/i.test(id)) s += 3;
+  if (v.localService) s += 1;
+  const t = tagOf(v);
+  if ((l === 'en' && t.startsWith('en-us')) || (l === 'ru' && t.startsWith('ru-ru')) || (l === 'he' && /^(he|iw)-il/.test(t))) s += 1;
+  return s;
+}
+const voiceId = v => String(v.voiceURI || v.name || '');
 function voiceFor(l){
-  const pre = l === 'he' ? ['he', 'iw'] : [l];
-  const list = voices.filter(v => pre.some(p => tagOf(v) === p || tagOf(v).startsWith(p + '-')));
+  const list = voicesFor(l);
   if (!list.length) return null;
-  const rank = v => (/google|natural|neural|premium|enhanced|siri/i.test(v.name) ? 2 : 0) + (v.localService ? 1 : 0) + (l === 'en' && tagOf(v) === 'en-us' ? 1 : 0);
-  return list.slice().sort((a, b) => rank(b) - rank(a))[0];
+  const want = voicePick[l];
+  if (want){ const v = list.find(x => voiceId(x) === want); if (v) return v; }
+  return list.slice().sort((a, b) => voiceScore(b, l) - voiceScore(a, l))[0];
 }
 const voicesKnown = () => voices.length > 0;
-const canVoice = l => !!synth && (!voicesKnown() || !!voiceFor(l));
+const canVoice = l => !!synth && !health.off && !health.bad[l] && (!voicesKnown() || !!voiceFor(l));
 
-function renderLangUI(){
-  langChips.forEach(ch => ch.setAttribute('aria-pressed', String(!!langsOn[ch.dataset.lang])));
-  let note = '';
-  const on = LANGS.filter(l => langsOn[l]);
-  if (!synth) note = 'הדפדפן הזה לא יכול לדבר, אז הדמות תציג את המילים כטקסט.';
-  else if (voicesKnown() && on.length){
-    const missing = on.filter(l => !voiceFor(l));
-    if (missing.length){
-      const names = missing.map(l => LANG_IN_HE[l]).join(' או ');
-      note = missing.length === on.length
-        ? `אין במכשיר קול ${names}, אז הדמות תציג את המילים כטקסט. אפשר להוסיף קולות בהגדרות ההקראה של המכשיר.`
-        : `אין במכשיר קול ${names}, אז הדמות תדלג על ${missing.length > 1 ? 'השפות האלה' : 'השפה הזו'}. אפשר להוסיף קולות בהגדרות ההקראה של המכשיר.`;
-    }
-  }
-  voiceNote.textContent = note; voiceNote.hidden = !note;
-}
 function refreshVoices(){
-  if (synth){ try { voices = synth.getVoices() || []; } catch (e) { voices = []; } }
+  if (synth){ try { voices = Array.from(synth.getVoices() || []); } catch (e) { voices = []; } }
   renderLangUI();
 }
+function setSpeechOff(why){
+  if (health.off) return;
+  health.off = true; health.why = why;
+  renderLangUI(); renderNoVoice();
+}
+/* A line that never started, failed, or ended at once. Before the engine has ever spoken, that language is put aside
+   (and tried again once the engine is heard); when every language failed that way, the engine counts as silent. */
+function noteSpeechFail(l, why){
+  if (document.visibilityState === 'hidden') return;
+  health.lastError = why;
+  if (!health.started){
+    health.silent++;
+    if (!health.bad[l]){ health.bad[l] = true; health.badEarly.push(l); }
+    const on = LANGS.filter(x => langsOn[x]);
+    if (on.every(x => health.bad[x]) || health.silent >= 4) setSpeechOff(why);
+  } else if (++health.fail[l] >= 2 && !health.bad[l]){
+    health.bad[l] = true;
+  }
+  renderLangUI();
+}
+function noteSpeechOk(l){
+  const first = !health.started;
+  health.started++; health.silent = 0;
+  if (health.off){ health.off = false; health.why = ''; }
+  if (first && health.badEarly.length){ for (const x of health.badEarly) if (x !== l){ health.bad[x] = false; health.fail[x] = 1; } health.badEarly = []; }
+  if (first) { renderLangUI(); renderNoVoice(); }
+}
+
 function duck(on){ if (master && AC && !muted) master.gain.setTargetAtTime(on ? VOL_DUCK : VOL, AC.currentTime, 0.05); }
-function stopSpeech(){
-  speakId++;
+function textMs(t){ return voiceOn && !muted ? 900 + String(t || '').length * 72 : 1500; }
+const estSpeechMs = t => 900 + String(t || '').length * 85;
+
+const speechQ = [];
+let cur = null, curSeq = 0, gapUntil = 0, pumpTimer = 0;
+const speechBusy = () => !!cur || speechQ.length > 0;
+function playItem(it){
+  const seq = ++curSeq;
+  cur = it; it.seq = seq; it.t0 = performance.now();
+  talkPri = it.pri; talkUntil = it.t0 + 60000;
+  if (ended || it.quiet) bubbleEl.hidden = true; else showBubble(it.text, it.lang);
+  if (it.voiced && synth && (it.quiet || canVoice(it.lang)) && document.visibilityState !== 'hidden') startUtterance(it);
+  else { textTalkUntil = it.t0 + textMs(it.text); it.timer = setTimeout(() => finishItem(seq, 'text'), textMs(it.text)); }
+}
+function startUtterance(it){
+  const seq = it.seq;
+  const go = () => {
+    if (!cur || cur.seq !== seq) return;
+    let u;
+    try {
+      u = new SpeechSynthesisUtterance(it.text);
+      u.lang = LANG_TAGS[it.lang];
+      const v = voiceFor(it.lang); if (v) u.voice = v;
+      u.rate = 0.9; u.pitch = 1.12; u.volume = 1;
+    } catch (e) { failItem(seq, 'utterance'); return; }
+    it.u = u; // held until the line is done, so the browser can't drop it and lose its events
+    u.onstart = () => onUStart(seq);
+    u.onend = () => onUEnd(seq);
+    u.onerror = e => onUError(seq, (e && e.error) || 'error');
+    it.watch = setTimeout(() => onUSilent(seq), health.started ? 3000 : 5000);
+    try { synth.speak(u); if (synth.paused) synth.resume(); } catch (e) { failItem(seq, 'speak'); }
+  };
+  let busy = false; try { busy = synth.speaking || synth.pending; } catch (e) {}
+  // Starting right away keeps the first line inside the tap, which iOS needs; after a cancel, Chrome needs a moment.
+  if (busy){ try { synth.cancel(); } catch (e) {} setTimeout(go, 90); } else go();
+}
+function onUStart(seq){
+  if (!cur || cur.seq !== seq) return;
+  const it = cur; it.started = performance.now();
+  clearTimeout(it.watch);
+  it.watch = setTimeout(() => { if (cur && cur.seq === seq){ try { synth.cancel(); } catch (e) {} finishItem(seq, 'stuck'); } }, estSpeechMs(it.text) * 2 + 4000);
+  speechActive = true; duck(true);
+  noteSpeechOk(it.lang);
+}
+function onUEnd(seq){
+  if (!cur || cur.seq !== seq) return;
+  const it = cur, now = performance.now();
+  // a language with no real voice behind it often "ends" at once, without a sound
+  if (it.started && now - it.started < 160 && it.text.length >= 6){ noteSpeechFail(it.lang, 'too-short'); keepText(seq, 'too-short'); return; }
+  if (!it.started) noteSpeechOk(it.lang);
+  health.fail[it.lang] = 0;
+  finishItem(seq, 'ok');
+}
+function onUError(seq, err){
+  if (!cur || cur.seq !== seq) return;
+  if (err === 'interrupted' || err === 'canceled'){ finishItem(seq, err); return; }
+  if (err !== 'not-allowed') noteSpeechFail(cur.lang, err); else health.lastError = err;
+  keepText(seq, err);
+}
+function onUSilent(seq){
+  if (!cur || cur.seq !== seq) return;
+  try { synth.cancel(); } catch (e) {}
+  noteSpeechFail(cur.lang, 'silent');
+  keepText(seq, 'silent');
+}
+function failItem(seq, why){ if (cur && cur.seq === seq){ noteSpeechFail(cur.lang, why); keepText(seq, why); } }
+// The line could not be heard: leave it on screen as text for the time it would have taken to say.
+function keepText(seq, why){
+  const it = cur; if (!it || it.seq !== seq) return;
+  clearTimeout(it.watch);
+  if (speechActive){ speechActive = false; duck(false); }
+  const left = Math.max(0, textMs(it.text) - (performance.now() - it.t0));
+  textTalkUntil = performance.now() + left;
+  it.timer = setTimeout(() => finishItem(seq, why), left);
+}
+function finishItem(seq, result){
+  if (!cur || cur.seq !== seq) return;
+  const it = cur;
+  clearTimeout(it.watch); clearTimeout(it.timer);
+  cur = null;
+  if (speechActive){ speechActive = false; duck(false); }
+  gapUntil = performance.now() + 140;
+  talkUntil = speechQ.length ? performance.now() + 60000 : performance.now() + 700;
+  if (it.onResult) try { it.onResult(result, it.started ? performance.now() - it.started : 0); } catch (e) {}
+  if (it.onDone) try { it.onDone(); } catch (e) {}
+  pump();
+}
+function pump(){
+  clearTimeout(pumpTimer);
+  if (cur || !speechQ.length) return;
+  const wait = gapUntil - performance.now();
+  if (wait > 0){ pumpTimer = setTimeout(pump, wait); return; }
+  playItem(speechQ.shift());
+}
+function interruptCurrent(){
+  if (!cur) return;
+  const it = cur;
+  clearTimeout(it.watch); clearTimeout(it.timer);
+  cur = null;
   try { if (synth) synth.cancel(); } catch (e) {}
   if (speechActive){ speechActive = false; duck(false); }
+  gapUntil = 0;
 }
-function speak(text, lang){
-  const id = ++speakId;
-  const go = () => {
-    if (id !== speakId) return;
-    try {
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = LANG_TAGS[lang];
-      const v = voiceFor(lang); if (v) u.voice = v;
-      u.rate = 0.9; u.pitch = 1.12; u.volume = 1;
-      u.onstart = () => { if (id !== speakId) return; speechActive = true; talkUntil = performance.now() + 8000; duck(true); };
-      const done = () => {
-        if (id !== speakId) return;
-        speechActive = false; duck(false); talkUntil = performance.now() + 700;
-        // speech can interrupt Web Audio on iOS; ask it back
-        if (AC && AC.state !== 'running'){ try { const p = AC.resume(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
-      };
-      u.onend = done; u.onerror = done;
-      synth.speak(u);
-      if (synth.paused) synth.resume();
-    } catch (e) {}
-  };
-  try {
-    if (synth.speaking || synth.pending){ synth.cancel(); if (speechActive){ speechActive = false; duck(false); } setTimeout(go, 70); }
-    else go();
-  } catch (e) {}
+function enqueueLine(it){
+  // important lines may cut a fruit name or a small "nice!", never each other
+  if (cur && it.pri >= 4 && cur.pri < 3) interruptCurrent();
+  speechQ.push(it);
+  if (!cur && speechQ.length === 1 && performance.now() >= gapUntil) playItem(speechQ.shift());
+  else pump();
+}
+/* Stops the voice now. Lines that were waiting are let go, and their follow-ups still run (as text when muted). */
+function stopSpeech(){
+  const waiting = speechQ.splice(0);
+  const it = cur;
+  interruptCurrent();
+  talkUntil = 0; textTalkUntil = 0;
+  for (const x of [it, ...waiting]) if (x && x.onDone) try { x.onDone(); } catch (e) {}
 }
 function placeBubble(){
   const w = bubbleEl.offsetWidth;
@@ -1347,12 +1502,16 @@ function showBubble(text, lang){
   bubbleEl.style.animation = 'none'; void bubbleEl.offsetWidth; bubbleEl.style.animation = '';
   placeBubble();
 }
-/* Picks the next language in turn (or a given one), shows the line, and speaks it when this device has a voice for it.
-   Lines with priority 9 and up always go out (counting, the freeze game, the end of the round). Returns the language used, or null. */
-function sayFrom(bank, vars, pri, forceLang){
+/* Picks the next language in turn (or a given one) and says the line, out loud when this device can, otherwise in the bubble.
+   pri 1-2: fruit names and small praise, only when nobody is talking. 3-8: waits its turn, unless something at least as
+   important is already talking or waiting.
+   9: always said, in order (counting, the freeze game, the end of the round). onDone runs when the line is over.
+   Returns the language used, or null when nothing will be said. */
+function sayFrom(bank, vars, pri, forceLang, onDone){
   if (!voiceOn) return null;
   const now = performance.now();
-  if (pri < 9 && now < talkUntil && pri <= talkPri) return null;
+  if (pri < 3 && (speechBusy() || now < talkUntil)) return null;
+  if (pri < 9 && speechBusy() && [cur, ...speechQ].some(x => x && x.pri >= pri)) return null;
   const on = LANGS.filter(l => langsOn[l]);
   if (!on.length) return null;
   const voiced = synth ? on.filter(canVoice) : [];
@@ -1362,20 +1521,125 @@ function sayFrom(bank, vars, pri, forceLang){
   else { lang = pool[langTurn % pool.length]; langTurn++; }
   const text = fillLine(lineFor(bank, lang), lang, vars);
   if (!text) return null;
-  talkPri = pri;
-  talkUntil = now + 2600;
-  // on the end screen the words are already in the cards, so the bubble would only cover them
-  if (ended) bubbleEl.hidden = true; else showBubble(text, lang);
-  if (voiced.includes(lang) && !muted){ textTalkUntil = 0; speak(text, lang); }
-  else { stopSpeech(); textTalkUntil = talkUntil; }
+  enqueueLine({ text, lang, pri, voiced: !muted && voiced.includes(lang), onDone });
   return lang;
 }
-const say = (kind, vars, pri, lang) => sayFrom(LINES[kind], vars, pri, lang);
+const say = (kind, vars, pri, lang, onDone) => sayFrom(LINES[kind], vars, pri, lang, onDone);
+/* Says one line in a given language right away, for the parents' voice check. */
+function testVoice(l, onResult){
+  stopSpeech();
+  const text = fillLine(lineFor(LINES.start, l), l, null);
+  enqueueLine({ text, lang: l, pri: 9, voiced: !!synth && !muted, quiet: true, onResult });
+}
 function setVoice(on){
   voiceOn = on; store.set('yfs-voice', on);
   voiceBtn.setAttribute('aria-pressed', String(on));
   voiceOnIcon.hidden = !on; voiceOffIcon.hidden = on;
   if (!on){ stopSpeech(); talkUntil = 0; textTalkUntil = 0; bubbleEl.hidden = true; }
+}
+function chromeLink(){
+  const target = /\.github\.io$/i.test(location.hostname) ? location.href.split('#')[0] : APP_URL;
+  if (!isAndroid) return target;
+  const u = new URL(target);
+  return 'intent://' + u.host + u.pathname + u.search + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(target) + ';end';
+}
+
+/* ---------- the parents' voice check: which voice each language uses, a button to hear it, and how to fix a silent phone ---------- */
+const LANG_NAME = { he: 'עברית', ru: 'Русский', en: 'English' };
+const ANDROID_TTS_HELP = 'בגלקסי ובשאר מכשירי אנדרואיד: הגדרות ← ניהול כללי ← טקסט לדיבור (⁨Text-to-speech⁩). בוחרים מנוע מועדף של Google (⁨Speech Services by Google⁩), נכנסים להתקנת נתוני קול (⁨Install voice data⁩), מורידים עברית, רוסית ואנגלית, ולוחצים ״השמעה״ כדי לוודא שיש קול. אחר כך סוגרים לגמרי את Chrome ואת המשחק, ופותחים מחדש.';
+const IOS_TTS_HELP = 'באייפון: הגדרות ← נגישות ← תוכן מוקרא (⁨Spoken Content⁩) ← קולות, ושם מורידים קול לשפה.';
+const vcStatus = {};
+function browserLabel(){
+  if (isAndroidInApp) return 'דפדפן מובנה בתוך אפליקציה, אנדרואיד';
+  if (isSamsungBrowser) return 'Samsung Internet';
+  if (isAndroid) return 'Chrome או דפדפן אחר, אנדרואיד';
+  if (isIOS) return navigator.standalone ? 'אפליקציה במסך הבית, iOS' : 'Safari, iOS';
+  return 'דפדפן מחשב';
+}
+function renderLangUI(){
+  langChips.forEach(ch => ch.setAttribute('aria-pressed', String(!!langsOn[ch.dataset.lang])));
+  const on = LANGS.filter(l => langsOn[l]);
+  let note = '';
+  if (!synth || health.off){
+    note = isAndroidInApp ? 'בתוך אפליקציות באנדרואיד (כמו Claude, פייסבוק או אינסטגרם) אין מנוע דיבור, ולכן הדמות מציגה את המילים כטקסט. כדי לשמוע אותה, פותחים את המשחק ב-Chrome.'
+      : isAndroid ? 'הטלפון לא משמיע את הקול של הדמות, ולכן היא מציגה את המילים כטקסט. ' + ANDROID_TTS_HELP + (isSamsungBrowser ? ' אפשר גם לפתוח את המשחק ב-Chrome.' : '')
+      : isIOS ? 'המכשיר לא משמיע את הקול של הדמות, ולכן היא מציגה את המילים כטקסט. ' + IOS_TTS_HELP
+      : 'הדפדפן הזה לא משמיע את הקול של הדמות, ולכן היא מציגה את המילים כטקסט.';
+  } else if (on.length){
+    const missing = on.filter(l => health.bad[l] || (voicesKnown() && !voiceFor(l)));
+    if (missing.length){
+      const names = missing.map(l => LANG_IN_HE[l]).join(' או ');
+      note = (missing.length === on.length
+        ? `אין במכשיר קול ${names}, ולכן הדמות מציגה את המילים כטקסט. `
+        : `אין במכשיר קול ${names}, ולכן הדמות מדלגת על ${missing.length > 1 ? 'השפות האלה' : 'השפה הזו'}. `)
+        + (isAndroid ? ANDROID_TTS_HELP : isIOS ? IOS_TTS_HELP : 'אפשר להוסיף קולות בהגדרות ההקראה של המכשיר.');
+    }
+  }
+  voiceNote.textContent = note; voiceNote.hidden = !note;
+  renderVoiceCheck();
+}
+function renderVoiceCheck(){
+  vcList.textContent = '';
+  for (const l of LANGS){
+    const li = document.createElement('li'); li.className = 'vc-row';
+    const name = document.createElement('span'); name.className = 'vc-lang'; name.textContent = LANG_NAME[l]; if (l !== 'he') name.lang = l;
+    const list = voicesFor(l);
+    let mid;
+    if (list.length > 1){
+      mid = document.createElement('select'); mid.className = 'vc-select'; mid.setAttribute('aria-label', 'קול ' + LANG_IN_HE[l]);
+      const chosen = voiceFor(l);
+      for (const v of list.slice().sort((a, b) => voiceScore(b, l) - voiceScore(a, l))){
+        const o = document.createElement('option'); o.value = voiceId(v); o.textContent = v.name || voiceId(v);
+        if (chosen && voiceId(chosen) === voiceId(v)) o.selected = true;
+        mid.append(o);
+      }
+      mid.addEventListener('change', () => { voicePick[l] = mid.value; store.set('yfs-voice-pick', voicePick); health.bad[l] = false; health.fail[l] = 0; runVoiceTest(l); });
+    } else {
+      mid = document.createElement('span'); mid.className = 'vc-voice';
+      const v = list[0];
+      mid.textContent = (!synth || health.off) ? 'לא זמין כאן' : v ? (v.name || voiceId(v)) : voicesKnown() ? 'אין קול במכשיר' : 'קול ברירת המחדל';
+    }
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'vc-test'; btn.textContent = '▶ בדיקה';
+    btn.setAttribute('aria-label', 'להשמיע משפט ' + LANG_IN_HE[l]);
+    btn.disabled = !synth;
+    btn.addEventListener('click', () => { initAudio(); runVoiceTest(l); });
+    const st = document.createElement('span'); st.className = 'vc-status'; st.setAttribute('aria-live', 'polite');
+    const s = vcStatus[l];
+    if (s){ st.textContent = s.text; st.classList.add(s.ok ? 'ok' : 'bad'); }
+    li.append(name, mid, btn, st);
+    vcList.append(li);
+  }
+  const bits = ['דפדפן: ' + browserLabel(), synth ? 'קולות במכשיר: ' + voices.length : 'אין מנוע דיבור'];
+  if (health.started) bits.push('הדמות כבר דיברה מאז שהמשחק נפתח');
+  if (health.lastError) bits.push('תקלה אחרונה: ' + health.lastError);
+  vcSum.textContent = bits.join(' · ');
+  const showChrome = isAndroid && (isAndroidInApp || isSamsungBrowser || !synth);
+  vcChrome.hidden = !showChrome;
+  if (showChrome) vcChrome.href = chromeLink();
+}
+const RESULT_TEXT = {
+  silent: 'לא נשמע: המנוע לא הגיב',
+  'too-short': 'לא נשמע: נגמר מיד, כנראה אין קול לשפה הזו',
+  'not-allowed': 'לא נשמע: הדפדפן חסם. לוחצים שוב על בדיקה',
+  text: 'אין קול לשפה הזו במכשיר'
+};
+function runVoiceTest(l){
+  vcStatus[l] = { text: 'משמיע…', ok: true }; renderVoiceCheck();
+  testVoice(l, (result, ms) => {
+    if (result === 'ok') vcStatus[l] = { text: '✓ נשמע (' + (ms / 1000).toFixed(1) + ' שניות). אם לא שמעתם, בדקו את עוצמת המדיה', ok: true };
+    else if (result === 'interrupted' || result === 'canceled') vcStatus[l] = null;
+    else vcStatus[l] = { text: '✗ ' + (RESULT_TEXT[result] || ('לא נשמע: ' + result)), ok: false };
+    renderLangUI(); renderNoVoice();
+  });
+}
+function renderNoVoice(){
+  const show = !synth || health.off;
+  noVoiceEl.hidden = !show;
+  if (!show) return;
+  const link = isAndroid && (isAndroidInApp || isSamsungBrowser || !synth);
+  noVoiceText.textContent = link ? 'כאן הדמות לא יכולה לדבר, רק להציג מילים.' : 'הדמות לא מצליחה לדבר במכשיר הזה. איך מתקנים: בהגדרות להורים.';
+  noVoiceLink.hidden = !link;
+  if (link) noVoiceLink.href = chromeLink();
 }
 function setMuted(m){
   muted = m; store.set('yfs-muted', m);
@@ -1418,7 +1682,7 @@ function resolveChallenge(f, now){
     sfxCount(got);
     if (got >= n){
       const cl = challenge.lang;
-      setTimeout(() => { if (playing && !ending) say('foundN', { num: { he: NUM_FRUIT.he[n], ru: NUM_FRUIT.ru[n], en: NUM_FRUIT.en[n] }, colorPl: { he: c.hePl, ru: c.ruGen, en: c.en }, fw: { ru: n < 5 ? 'фрукта' : 'фруктов' } }, 9, cl); }, 900);
+      if (playing && !ending) say('foundN', { num: { he: NUM_FRUIT.he[n], ru: NUM_FRUIT.ru[n], en: NUM_FRUIT.en[n] }, colorPl: { he: c.hePl, ru: c.ruGen, en: c.en }, fw: { ru: n < 5 ? 'фрукта' : 'фруктов' } }, 9, cl);
     }
   }
   if (got >= n){
@@ -2111,6 +2375,7 @@ function startRound(fromParent){
   resetBasket();
   applyWorld(world);
   enterPlay();
+  stopSpeech();
   say('start', null, 5);
 }
 function startEnding(){
@@ -2185,27 +2450,34 @@ function renderAsk(){
   }
 }
 function textMs(t){ return voiceOn && !muted ? 900 + String(t || '').length * 72 : 1500; }
-/* The end of the round: the character invites a short movement game and counts it out loud, then points to a real fruit. */
+/* The end of the round: the character invites a short movement game and counts it out loud, then points to a real fruit.
+   Each step starts when the line before it has been said, and the counts are at least 1.6 s apart so there is time to move. */
 function runEndSequence(){
   const id = ++endSeq;
-  const later = (ms, fn) => setTimeout(() => { if (id === endSeq && ended) fn(); }, ms);
+  const alive = () => id === endSeq && ended;
+  const after = (ms, fn) => setTimeout(() => { if (alive()) fn(); }, ms);
+  const sayThen = (bank, lang, minMs, next) => {
+    const t0 = performance.now();
+    let done = false;
+    const go = () => { if (done) return; done = true; after(Math.max(0, minMs - (performance.now() - t0)), next); };
+    const got = sayFrom(bank, null, 9, lang, go);
+    if (!got) go();
+    return got;
+  };
   moveCount.textContent = '';
-  const lang = say(opts.move ? 'end' : 'endPlain', null, 9) || 'he';
-  if (!opts.move) return;
+  if (!opts.move){ say('endPlain', null, 9); return; }
   const mv = currentMove;
-  later(textMs(bubbleEl.textContent), () => {
-    const L = sayFrom(mv.line, null, 9, lang) || lang;
-    const lead = textMs(bubbleEl.textContent);
-    for (let i = 1; i <= 5; i++){
-      later(lead + (i - 1) * 1600, () => {
-        moveCount.textContent = String(i);
-        moveCount.classList.remove('pop'); void moveCount.offsetWidth; moveCount.classList.add('pop');
-        sayFrom({ [L]: [COUNT_WORDS[L][i] + '!'] }, null, 9, L);
-        sfxCount(i);
-      });
-    }
-    later(lead + 5 * 1600 + 200, () => { sayFrom(LINES.moveDone, null, 9, L); mood('happy', 1500); burstConfetti(reduceMotion ? 8 : 30); });
-  });
+  let L = 'he';
+  const count = i => {
+    moveCount.textContent = String(i);
+    moveCount.classList.remove('pop'); void moveCount.offsetWidth; moveCount.classList.add('pop');
+    sfxCount(i);
+    sayThen({ [L]: [COUNT_WORDS[L][i] + '!'] }, L, 1600, () => {
+      if (i < 5) count(i + 1);
+      else { mood('happy', 1500); burstConfetti(reduceMotion ? 8 : 30); sayThen(LINES.moveDone, L, 0, () => {}); }
+    });
+  };
+  L = sayThen(LINES.end, null, 600, () => { sayThen(mv.line, L, 900, () => count(1)); }) || 'he';
 }
 let currentMove = MOVES[0];
 function showEnd(silent){
@@ -2323,7 +2595,7 @@ langChips.forEach(ch => ch.addEventListener('click', () => {
   store.set('yfs-langs', langsOn);
   renderLangUI();
   // Let the parent hear the voice right away when a language is switched on.
-  if (langsOn[l] && voiceOn && !muted && canVoice(l)) speak(fillLine(lineFor(LINES.start, l), l, null), l);
+  if (langsOn[l] && voiceOn && !muted && canVoice(l)) runVoiceTest(l);
 }));
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
@@ -2333,6 +2605,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible'){
     lastT = performance.now();
+    if (synth && !cur) try { synth.cancel(); } catch (e) {}
     if (playing) keepAwake();
     if (!playing) renderStart();
   } else {
@@ -2372,10 +2645,18 @@ if (synth){
   refreshVoices();
   try { synth.addEventListener('voiceschanged', refreshVoices); } catch (e) { synth.onvoiceschanged = refreshVoices; }
   let tries = 0;
-  const poll = setInterval(() => { refreshVoices(); if (voicesKnown() || ++tries > 12) clearInterval(poll); }, 300);
+  const poll = setInterval(() => {
+    refreshVoices();
+    if (voicesKnown() || ++tries > 20){
+      clearInterval(poll); voicesSettled = true;
+      // Chrome on Android always lists its voices; an empty list there means an in-app browser or no speech engine at all
+      if (isAndroid && !voicesKnown() && !health.started) setSpeechOff('no-voices');
+    }
+  }, 400);
 } else {
   renderLangUI();
 }
+renderNoVoice();
 setMuted(muted);
 setVoice(voiceOn);
 makeBasket();

@@ -1,5 +1,5 @@
 /* Offline support for "הפירות שלי": everything the game needs is stored on the device after the first visit. */
-const VERSION = 'fruit-f9d7612a8f';
+const VERSION = 'fruit-6d1d0d982c';
 const ASSETS = [
   "./",
   "./fonts/fonts.css",

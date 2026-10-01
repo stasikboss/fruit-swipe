@@ -88,6 +88,10 @@ bdi.en{font-family:var(--font-display)}
   background:var(--melon);color:var(--ink);font:700 20px/1.1 var(--font-display);text-decoration:none;cursor:pointer;box-shadow:0 5px 0 var(--ink)}
 .btn.secondary{background:var(--cream);box-shadow:0 4px 0 var(--ink);font-size:17px;min-height:50px}
 .btn svg{width:22px;height:22px;flex:none}
+.fix-voice{margin-top:16px;padding-top:14px;border-top:2px solid rgba(27,36,48,.12)}
+.fix-voice summary{cursor:pointer;min-height:32px;font:700 16px/1.3 var(--font-display)}
+.fix-voice summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.fix-voice p{margin-top:8px}
 .done{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:16px;background:#e3f6d9;font:600 16px/1.4 var(--font-display)}
 
 .qr-row{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
@@ -139,7 +143,7 @@ footer strong{color:var(--gold);font-weight:600}
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1b2430" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4.5M12 17.5h.01"/></svg>
       <span>פתחתם מתוך <span id="inapp-name">פייסבוק</span></span>
     </h2>
-    <p class="muted">מתוך האפליקציה הזו אי אפשר להתקין. פותחים את הקישור בדפדפן הרגיל של הטלפון, וממשיכים משם.</p>
+    <p class="muted">מתוך האפליקציה הזו אי אפשר להתקין, ובאנדרואיד גם הדמות לא תדבר שם. פותחים את הקישור בדפדפן הרגיל של הטלפון, וממשיכים משם.</p>
     <p class="muted" id="inapp-ios" hidden>לוחצים על <span class="ui">⋯</span> או על סמל המצפן בפינת המסך, ובוחרים לפתוח בספארי (Open in Safari).</p>
     <a class="btn" id="open-chrome" href="#" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
@@ -183,11 +187,15 @@ footer strong{color:var(--gold);font-weight:600}
         <p class="muted" style="margin-top:12px">ההתקנה לוקחת כמה שניות, בלי חנות ובלי הרשמה.</p>
       </div>
       <ol class="steps" id="android-steps">
-        <li><span><span class="step-title">פותחים את הדף ב-Chrome או ב-Samsung Internet</span><span class="step-text">אם הוא נפתח בתוך וואטסאפ או פייסבוק, עוברים קודם לדפדפן.</span></span></li>
+        <li><span><span class="step-title">פותחים את הדף ב-Chrome</span><span class="step-text">אם הוא נפתח בתוך אפליקציה אחרת (פייסבוק, אינסטגרם, Claude), עוברים קודם ל-Chrome. אפשר גם Samsung Internet.</span></span></li>
         <li><span><span class="step-title">ב-Chrome: לוחצים על <span class="ui">⋮</span></span><span class="step-text">ובוחרים ״התקנת אפליקציה״ או ״הוספה למסך הבית״ (<bdi class="en" dir="ltr">Install app / Add to Home screen</bdi>).</span></span></li>
         <li><span><span class="step-title">ב-Samsung Internet: לוחצים על <span class="ui">☰</span></span><span class="step-text">ובוחרים ״הוספת דף אל״ ואז ״מסך הבית״ (<bdi class="en" dir="ltr">Add page to › Home screen</bdi>).</span></span></li>
         <li><span><span class="step-title">מאשרים ״התקנה״</span><span class="step-text">הסמל ״הפירות שלי״ יופיע במסך הבית.</span></span></li>
       </ol>
+      <details class="fix-voice">
+        <summary>הדמות לא מדברת באנדרואיד?</summary>
+        <p class="muted">הקול מגיע ממנוע ההקראה של הטלפון. בהגדרות ← ניהול כללי ← טקסט לדיבור (<bdi class="en" dir="ltr">Text-to-speech</bdi>): בוחרים מנוע מועדף של Google, נכנסים להתקנת נתוני קול (<bdi class="en" dir="ltr">Install voice data</bdi>), מורידים עברית, רוסית ואנגלית, ולוחצים ״השמעה״ לבדיקה. אחר כך סוגרים לגמרי את Chrome ואת המשחק ופותחים מחדש. במשחק עצמו, בהגדרות להורים, יש ״בדיקת קול״ לכל שפה.</p>
+      </details>
     </div>
 
     <p class="done" id="installed" hidden role="status">
@@ -254,7 +262,8 @@ footer strong{color:var(--gold);font-weight:600}
   var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   var isAndroid = /Android/i.test(ua);
   var isMobile = isIOS || isAndroid;
-  var inApp = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger|musical_ly|TikTok|Line\//i.test(ua);
+  var inAppKnown = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger|musical_ly|TikTok|Line\//i.test(ua);
+  var inApp = inAppKnown || (isAndroid && /; wv\)/.test(ua));
   var cleanUrl = location.origin + location.pathname + location.search;
 
   /* Device tabs: the visitor's own device first; #ios or #android in the link forces one. */
@@ -281,7 +290,7 @@ footer strong{color:var(--gold);font-weight:600}
   /* Opened inside Facebook, Instagram and similar: installing only works from the real browser. */
   if (inApp){
     $('inapp').hidden = false;
-    $('inapp-name').textContent = /Instagram/i.test(ua) ? 'אינסטגרם' : /Messenger/i.test(ua) ? 'מסנג׳ר' : /musical_ly|TikTok/i.test(ua) ? 'טיקטוק' : 'פייסבוק';
+    $('inapp-name').textContent = /Instagram/i.test(ua) ? 'אינסטגרם' : /Messenger/i.test(ua) ? 'מסנג׳ר' : /musical_ly|TikTok/i.test(ua) ? 'טיקטוק' : /FBAN|FBAV|FB_IAB|FBIOS/i.test(ua) ? 'פייסבוק' : 'אפליקציה אחרת';
     if (isIOS) $('inapp-ios').hidden = false;
     if (isAndroid){
       var chrome = $('open-chrome');
