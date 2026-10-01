@@ -19,7 +19,7 @@
     { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "screenshots": [
-    { "src": "screens/game.jpg", "sizes": "1170x2532", "type": "image/jpeg", "form_factor": "narrow", "label": "הירח שואל: אתה יכול למצוא פרי אדום?" },
-    { "src": "screens/end.jpg", "sizes": "1170x2532", "type": "image/jpeg", "form_factor": "narrow", "label": "הסל מלא, ומילים לתרגול בשלוש שפות" }
+    { "src": "screens/game.jpg", "sizes": "1170x2532", "type": "image/jpeg", "form_factor": "narrow", "label": "ביום: השמש סופרת יחד שלושה פירות אדומים" },
+    { "src": "screens/end.jpg", "sizes": "1170x2532", "type": "image/jpeg", "form_factor": "narrow", "label": "בלילה: הסל מלא, זזים יחד, ומילים בשלוש שפות" }
   ]
 }
